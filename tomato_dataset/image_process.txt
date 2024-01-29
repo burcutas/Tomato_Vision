@@ -1,0 +1,29 @@
+import cv2
+import numpy as np
+from matplotlib import pyplot as plt
+from google.colab import files
+
+
+image_path = 'fotograf/dosyasinin/yolu/'
+
+# Fotoğrafı oku
+img = cv2.imread(image_path)
+
+# Fotoğrafın boyutunu düşür
+scale_percent = 15  # Düşürme yüzdesi
+width = int(img.shape[1] * scale_percent / 100)
+height = int(img.shape[0] * scale_percent / 100)
+dim = (width, height)
+img = cv2.resize(img, dim, interpolation=cv2.INTER_AREA)
+
+# Fotoğrafın renklerini RGB'den BGR'ye dönüştür
+img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+
+# Renk skalasının yarısının altındaki renkleri seyrelt, üstündekileri yoğunlaştır
+for i in range(height):
+    for j in range(width):
+        pixel = img[i, j]
+        if np.mean(pixel) < 127:
+            img[i, j] = np.clip(pixel * 0.6, 0, 255)  # Seyreltme
+        else:
+            img[i, j] = np.clip(pixel * 1.3, 0, 255)  # Yoğunlaştırma
